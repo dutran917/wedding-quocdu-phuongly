@@ -96,15 +96,15 @@ class Leaf {
   reset(initial = false) {
     this.x          = Math.random() * canvas.width;
     this.y          = initial ? Math.random() * -canvas.height : -20;
-    this.size       = 6 + Math.random() * 8;          // nhỏ gọn như ảnh
-    this.speedY     = 0.5 + Math.random() * 0.8;      // rơi chậm
-    this.speedX     = (Math.random() - 0.5) * 0.4;    // trôi ngang nhẹ
+    this.size       = 5 + Math.random() * 6;           // nhỏ hơn
+    this.speedY     = 0.3 + Math.random() * 0.4;       // rơi chậm hơn
+    this.speedX     = (Math.random() - 0.5) * 0.25;    // trôi ngang rất nhẹ
     this.wobble     = Math.random() * Math.PI * 2;
-    this.wobbleSpd  = 0.015 + Math.random() * 0.02;
-    this.wobbleAmp  = 0.4 + Math.random() * 0.5;
-    this.rot        = (Math.random() - 0.5) * 0.6;    // hơi nghiêng
-    this.rotSpd     = (Math.random() - 0.5) * 0.012;  // xoay rất chậm
-    this.alpha      = 0.55 + Math.random() * 0.35;
+    this.wobbleSpd  = 0.01 + Math.random() * 0.015;
+    this.wobbleAmp  = 0.25 + Math.random() * 0.35;
+    this.rot        = (Math.random() - 0.5) * 0.5;
+    this.rotSpd     = (Math.random() - 0.5) * 0.008;   // xoay rất chậm
+    this.alpha      = 0.35 + Math.random() * 0.3;      // trong hơn
     this.colorObj   = LEAF_COLORS[Math.floor(Math.random() * LEAF_COLORS.length)];
   }
 
@@ -133,7 +133,7 @@ function resizeCanvas() {
   canvas.height = window.innerHeight;
 }
 
-function initPetals(count = 40) {
+function initPetals(count = 18) {
   petals = [];
   for (let i = 0; i < count; i++) petals.push(new Leaf());
 }
@@ -166,7 +166,7 @@ function openInvitation() {
 
     // Hoa rơi — canvas z-index 999 (above sections, below gallery)
     resizeCanvas();
-    initPetals(60);
+    initPetals(18);
     animatePetals();
   }, 900);
 }
