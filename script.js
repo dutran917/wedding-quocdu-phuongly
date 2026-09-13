@@ -147,6 +147,17 @@ function animatePetals() {
 /* ══════════════════════════════════════════
    OPEN INVITATION
 ══════════════════════════════════════════ */
+
+// Đọc tên khách từ URL param ?to=TênKhách
+(function initGuestName() {
+  const params = new URLSearchParams(window.location.search);
+  const guest  = params.get('to');
+  const el     = document.getElementById('cover-guest-name');
+  if (el && guest) {
+    el.textContent = decodeURIComponent(guest);
+  }
+})();
+
 function openInvitation() {
   const cover = document.getElementById('cover');
   const main  = document.getElementById('main-content');
