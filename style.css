@@ -141,11 +141,11 @@ img { max-width: 100%; display: block; }
 }
 
 .cover-datetime {
-  font-family: var(--f-serif);
-  font-size: 1.15rem;
-  font-weight: 500;
-  color: var(--g-800);
-  letter-spacing: 1.5px;
+  font-family: var(--f-body);
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: var(--text);
+  letter-spacing: 1px;
   margin-bottom: 6px;
 }
 
