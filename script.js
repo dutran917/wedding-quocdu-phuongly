@@ -36,109 +36,83 @@ let petalRAF       = null;
 const STORAGE_KEY  = 'wedding_wishes_qd_pl_v2';
 
 /* ══════════════════════════════════════════
-   HOA RƠI — Canvas Petal System
+   LÁ RƠI — Canvas Leaf System
+   Chỉ dùng lá nhỏ màu xanh 2 tone (đậm / nhạt)
+   đúng như ảnh template
 ══════════════════════════════════════════ */
 const canvas = document.getElementById('petal-canvas');
 const ctx    = canvas.getContext('2d');
 
-// Các dạng hoa / lá
-const PETAL_TYPES = [
-  // Cánh hoa tròn
-  (c, size, color, alpha) => {
-    c.globalAlpha = alpha;
-    c.fillStyle = color;
+// Màu lá: 2 tone xanh đậm & xanh nhạt hơn
+const LEAF_COLORS = [
+  { fill: '#3d5a3e', vein: '#2a3f2b' },  // xanh rêu đậm
+  { fill: '#506e52', vein: '#3d5a3e' },  // xanh rêu vừa
+  { fill: '#5a7a5b', vein: '#3d5a3e' },  // xanh rêu nhạt
+  { fill: '#3a5c3c', vein: '#243528' },  // tone đậm nhất
+];
+
+// Vẽ 1 chiếc lá nhỏ — hình oval nhọn 2 đầu với gân giữa
+function drawLeaf(c, size, colorObj, alpha) {
+  const { fill, vein } = colorObj;
+
+  c.globalAlpha = alpha;
+
+  // Thân lá
+  c.fillStyle = fill;
+  c.beginPath();
+  c.moveTo(0, -size);
+  c.bezierCurveTo(size * 0.55, -size * 0.5, size * 0.55, size * 0.5, 0, size);
+  c.bezierCurveTo(-size * 0.55, size * 0.5, -size * 0.55, -size * 0.5, 0, -size);
+  c.fill();
+
+  // Gân giữa
+  c.globalAlpha = alpha * 0.5;
+  c.strokeStyle = vein;
+  c.lineWidth = size * 0.12;
+  c.lineCap = 'round';
+  c.beginPath();
+  c.moveTo(0, -size * 0.8);
+  c.lineTo(0, size * 0.8);
+  c.stroke();
+
+  // Gân phụ (2 bên nhỏ hơn)
+  c.globalAlpha = alpha * 0.25;
+  c.lineWidth = size * 0.06;
+  [[-0.3, -0.35], [-0.3, 0.1], [-0.25, 0.45]].forEach(([ox, oy]) => {
     c.beginPath();
-    c.ellipse(0, 0, size * .55, size, 0, 0, Math.PI * 2);
-    c.fill();
-  },
-  // Cánh hoa nhọn
-  (c, size, color, alpha) => {
-    c.globalAlpha = alpha;
-    c.fillStyle = color;
-    c.beginPath();
-    c.moveTo(0, -size);
-    c.bezierCurveTo(size * .7, -size * .5, size * .6, size * .4, 0, size);
-    c.bezierCurveTo(-size * .6, size * .4, -size * .7, -size * .5, 0, -size);
-    c.fill();
-  },
-  // Lá nhỏ
-  (c, size, color, alpha) => {
-    c.globalAlpha = alpha;
-    c.fillStyle = color;
-    c.beginPath();
-    c.moveTo(0, -size);
-    c.bezierCurveTo(size * .8, -size * .3, size * .8, size * .3, 0, size);
-    c.bezierCurveTo(-size * .8, size * .3, -size * .8, -size * .3, 0, -size);
-    c.fill();
-    // Gân lá
-    c.globalAlpha = alpha * .4;
-    c.strokeStyle = darkenColor(color, 30);
-    c.lineWidth = .8;
-    c.beginPath();
-    c.moveTo(0, -size * .8);
-    c.lineTo(0, size * .8);
+    c.moveTo(0, oy * size);
+    c.lineTo(ox * size * 1.2, (oy - 0.25) * size);
     c.stroke();
-  },
-  // Hoa 5 cánh
-  (c, size, color, alpha) => {
-    c.globalAlpha = alpha;
-    c.fillStyle = color;
-    for (let i = 0; i < 5; i++) {
-      c.save();
-      c.rotate((i / 5) * Math.PI * 2);
-      c.beginPath();
-      c.ellipse(0, -size * .6, size * .28, size * .5, 0, 0, Math.PI * 2);
-      c.fill();
-      c.restore();
-    }
-    // Nhụy
-    c.fillStyle = '#fff8e7';
-    c.globalAlpha = alpha * .9;
     c.beginPath();
-    c.arc(0, 0, size * .18, 0, Math.PI * 2);
-    c.fill();
-  },
-];
-
-const PETAL_COLORS = [
-  '#f9e4e4', '#f7d6d6', '#fce8d5',
-  '#eaf4e0', '#d4edc8', '#c8e0b4',
-  '#ffffff', '#fef9f0', '#e8f5e0',
-];
-
-function darkenColor(hex, amount) {
-  const num = parseInt(hex.slice(1), 16);
-  const r = Math.max(0, (num >> 16) - amount);
-  const g = Math.max(0, ((num >> 8) & 0xff) - amount);
-  const b = Math.max(0, (num & 0xff) - amount);
-  return `rgb(${r},${g},${b})`;
+    c.moveTo(0, oy * size);
+    c.lineTo(-ox * size * 1.2, (oy - 0.25) * size);
+    c.stroke();
+  });
 }
 
-class Petal {
+class Leaf {
   constructor() { this.reset(true); }
 
   reset(initial = false) {
-    this.x     = Math.random() * canvas.width;
-    this.y     = initial ? Math.random() * canvas.height * -1 : -20;
-    this.size  = 5 + Math.random() * 9;
-    this.speedY = .6 + Math.random() * 1.2;
-    this.speedX = (Math.random() - .5) * .8;
-    this.wobble = Math.random() * Math.PI * 2;
-    this.wobbleSpeed = .02 + Math.random() * .03;
-    this.rot   = Math.random() * Math.PI * 2;
-    this.rotSpeed = (Math.random() - .5) * .06;
-    this.alpha = .5 + Math.random() * .45;
-    this.color = PETAL_COLORS[Math.floor(Math.random() * PETAL_COLORS.length)];
-    this.type  = Math.floor(Math.random() * PETAL_TYPES.length);
-    this.swingAmp = 30 + Math.random() * 40;
+    this.x          = Math.random() * canvas.width;
+    this.y          = initial ? Math.random() * -canvas.height : -20;
+    this.size       = 6 + Math.random() * 8;          // nhỏ gọn như ảnh
+    this.speedY     = 0.5 + Math.random() * 0.8;      // rơi chậm
+    this.speedX     = (Math.random() - 0.5) * 0.4;    // trôi ngang nhẹ
+    this.wobble     = Math.random() * Math.PI * 2;
+    this.wobbleSpd  = 0.015 + Math.random() * 0.02;
+    this.wobbleAmp  = 0.4 + Math.random() * 0.5;
+    this.rot        = (Math.random() - 0.5) * 0.6;    // hơi nghiêng
+    this.rotSpd     = (Math.random() - 0.5) * 0.012;  // xoay rất chậm
+    this.alpha      = 0.55 + Math.random() * 0.35;
+    this.colorObj   = LEAF_COLORS[Math.floor(Math.random() * LEAF_COLORS.length)];
   }
 
   update() {
-    this.wobble  += this.wobbleSpeed;
-    this.x       += this.speedX + Math.sin(this.wobble) * .6;
-    this.y       += this.speedY;
-    this.rot     += this.rotSpeed;
-
+    this.wobble += this.wobbleSpd;
+    this.x      += this.speedX + Math.sin(this.wobble) * this.wobbleAmp;
+    this.y      += this.speedY;
+    this.rot    += this.rotSpd;
     if (this.y > canvas.height + 30) this.reset();
   }
 
@@ -146,22 +120,22 @@ class Petal {
     ctx.save();
     ctx.translate(this.x, this.y);
     ctx.rotate(this.rot);
-    PETAL_TYPES[this.type](ctx, this.size, this.color, this.alpha);
+    drawLeaf(ctx, this.size, this.colorObj, this.alpha);
     ctx.restore();
     ctx.globalAlpha = 1;
   }
 }
 
-let petals = [];
+let petals = [];   // giữ tên biến để không phải đổi chỗ khác
 
 function resizeCanvas() {
   canvas.width  = window.innerWidth;
   canvas.height = window.innerHeight;
 }
 
-function initPetals(count = 55) {
+function initPetals(count = 40) {
   petals = [];
-  for (let i = 0; i < count; i++) petals.push(new Petal());
+  for (let i = 0; i < count; i++) petals.push(new Leaf());
 }
 
 function animatePetals() {
@@ -466,16 +440,39 @@ function updateMusicUI(playing) {
 }
 
 /* ══════════════════════════════════════════
-   SAVE QR
+   SAVE QR — lưu về thư viện ảnh (mobile)
+   hoặc download file (desktop)
 ══════════════════════════════════════════ */
-function saveQR(url, filename) {
+async function saveQR(src, filename) {
+  try {
+    // Fetch ảnh về dạng blob
+    const resp = await fetch(src);
+    const blob = await resp.blob();
+    const file = new File([blob], filename + '.png', { type: 'image/png' });
+
+    // Trên mobile: dùng Web Share API → lưu vào thư viện ảnh
+    if (navigator.canShare && navigator.canShare({ files: [file] })) {
+      await navigator.share({
+        files: [file],
+        title: 'QR Chuyển khoản – Quốc Du & Phương Ly',
+      });
+      return;
+    }
+  } catch (err) {
+    // Share bị cancel hoặc không hỗ trợ → fallback download
+  }
+
+  // Fallback: tạo link download (desktop / browser không hỗ trợ share)
+  const url = URL.createObjectURL(
+    await fetch(src).then(r => r.blob())
+  );
   const a = document.createElement('a');
   a.href     = url;
   a.download = filename + '.png';
-  a.target   = '_blank';
   document.body.appendChild(a);
   a.click();
   document.body.removeChild(a);
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
 }
 
 /* ══════════════════════════════════════════

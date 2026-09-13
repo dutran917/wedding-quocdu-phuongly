@@ -825,6 +825,7 @@ img { max-width: 100%; display: block; }
   gap: 14px;
   position: relative; z-index: 1;
   margin-bottom: 32px;
+  align-items: stretch;   /* 2 card cao bằng nhau */
 }
 
 .gift-card {
@@ -834,6 +835,9 @@ img { max-width: 100%; display: block; }
   text-align: center;
   box-shadow: 0 3px 14px rgba(0,0,0,.07);
   transition: transform .3s, box-shadow .3s;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 .gift-card:hover {
   transform: translateY(-4px);
@@ -847,6 +851,10 @@ img { max-width: 100%; display: block; }
   margin-bottom: 14px;
   line-height: 1.5;
   letter-spacing: .3px;
+  /* Không cho wrap — dùng font nhỏ hơn nếu cần */
+  width: 100%;
+  word-break: keep-all;
+  hyphens: none;
 }
 
 /* QR frame — viền trắng bo tròn đúng template */
