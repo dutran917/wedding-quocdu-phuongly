@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Tạo link mời – Quốc Du &amp; Phương Ly</title>
-  <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@300;400;500;600&family=Great+Vibes&display=swap" rel="stylesheet"/>
+  <title>Tải thiệp cưới – Quốc Du &amp; Phương Ly</title>
+  <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@300;400;500;600&family=Great+Vibes&family=Cormorant+Garamond:ital,wght@1,400;1,500&display=swap" rel="stylesheet"/>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -19,7 +19,7 @@
     .card {
       background: #f5f1eb;
       border-radius: 20px;
-      padding: 40px 32px 36px;
+      padding: 36px 28px 32px;
       width: 100%; max-width: 420px;
       box-shadow: 0 20px 60px rgba(0,0,0,.4);
       text-align: center;
@@ -47,13 +47,13 @@
       letter-spacing: 3px;
       text-transform: uppercase;
       color: #777;
-      margin-bottom: 28px;
+      margin-bottom: 24px;
     }
 
     .divider {
       border: none;
       border-top: 1px solid #d0c8be;
-      margin: 0 auto 28px;
+      margin: 0 auto 24px;
       width: 60%;
     }
 
@@ -83,7 +83,29 @@
     }
     input[type="text"]:focus { border-color: #3d5a3e; }
 
-    .btn-gen {
+    .preview-wrap {
+      margin-bottom: 16px;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 8px 24px rgba(45, 61, 46, .18);
+      background: #f3eee4;
+    }
+
+    #preview {
+      display: block;
+      width: 100%;
+      height: auto;
+      vertical-align: top;
+    }
+
+    .hint {
+      font-size: .75rem;
+      color: #777;
+      line-height: 1.5;
+      margin-bottom: 16px;
+    }
+
+    .btn-download {
       width: 100%;
       background: #3d5a3e;
       color: #fff;
@@ -95,83 +117,20 @@
       font-weight: 600;
       letter-spacing: 2px;
       cursor: pointer;
-      transition: background .2s, transform .15s;
-      margin-bottom: 24px;
+      transition: background .2s, transform .15s, opacity .2s;
     }
-    .btn-gen:hover { background: #506e52; transform: scale(1.02); }
-
-    /* Result box */
-    .result-box {
-      display: none;
-      background: #fff;
-      border: 1.5px solid #c8ddb5;
-      border-radius: 12px;
-      padding: 16px;
-      text-align: left;
-    }
-    .result-box.show { display: block; }
-
-    .result-label {
-      font-size: .72rem;
-      font-weight: 700;
-      letter-spacing: 2px;
-      text-transform: uppercase;
-      color: #3d5a3e;
-      margin-bottom: 8px;
+    .btn-download:hover { background: #506e52; transform: scale(1.02); }
+    .btn-download:disabled {
+      opacity: .55;
+      cursor: not-allowed;
+      transform: none;
     }
 
-    .result-url {
-      font-size: .82rem;
-      color: #444;
-      word-break: break-all;
-      line-height: 1.5;
-      background: #f5f1eb;
-      border-radius: 8px;
-      padding: 10px 12px;
-      margin-bottom: 12px;
-      user-select: all;
-    }
-
-    .result-actions {
-      display: flex; gap: 8px;
-    }
-
-    .btn-copy, .btn-open-link {
-      flex: 1;
-      padding: 10px;
-      border-radius: 8px;
+    .status {
+      margin-top: 12px;
+      min-height: 1.2em;
       font-size: .78rem;
-      font-weight: 600;
-      cursor: pointer;
-      letter-spacing: 1px;
-      transition: background .2s, transform .1s;
-      border: none;
-    }
-    .btn-copy {
-      background: #3d5a3e; color: #fff;
-    }
-    .btn-copy:hover { background: #506e52; }
-    .btn-copy.copied { background: #6ea050; }
-
-    .btn-open-link {
-      background: transparent;
       color: #3d5a3e;
-      border: 1.5px solid #3d5a3e;
-    }
-    .btn-open-link:hover { background: #edf5ed; }
-
-    .preview-guest {
-      margin-top: 16px;
-      font-size: .82rem;
-      color: #777;
-      text-align: center;
-    }
-    .preview-guest strong {
-      font-family: 'Great Vibes', cursive;
-      font-size: 1.2rem;
-      color: #3d5a3e;
-      display: block;
-      margin-top: 2px;
     }
   </style>
 </head>
@@ -179,77 +138,164 @@
   <div class="card">
     <div class="hy">喜</div>
     <p class="title">Quốc Du &amp; Phương Ly</p>
-    <p class="subtitle">Tạo link mời cá nhân</p>
+    <p class="subtitle">Tải thiệp cưới</p>
     <hr class="divider"/>
 
     <label for="guest-input">Tên người được mời</label>
     <input type="text" id="guest-input"
            placeholder="VD: Anh Minh, Gia đình chú Hùng…"
-           onkeydown="if(event.key==='Enter') generateLink()"/>
-    <button class="btn-gen" onclick="generateLink()">✉ Tạo link mời</button>
+           autocomplete="name"
+           onkeydown="if(event.key==='Enter') downloadInvite()"/>
 
-    <div class="result-box" id="result-box">
-      <p class="result-label">Link mời</p>
-      <div class="result-url" id="result-url"></div>
-      <div class="result-actions">
-        <button class="btn-copy" id="btn-copy" onclick="copyLink()">📋 Sao chép</button>
-        <button class="btn-open-link" onclick="openLink()">🔗 Xem thiệp</button>
-      </div>
-      <p class="preview-guest">
-        Khách sẽ thấy: "TRÂN TRỌNG KÍNH MỜI"
-        <strong id="preview-name"></strong>
-      </p>
+    <div class="preview-wrap">
+      <canvas id="preview" width="1024" height="1536" aria-label="Xem trước thiệp cưới"></canvas>
     </div>
+    <p class="hint">Tên sẽ hiện ngay dưới dòng “Trân trọng kính mời”. Trên điện thoại, chọn <strong>Lưu ảnh</strong> để đưa vào thư viện.</p>
+
+    <button class="btn-download" id="btn-download" onclick="downloadInvite()">Tải thiệp cưới</button>
+    <p class="status" id="status"></p>
   </div>
 
   <script>
-    const BASE_URL = 'https://thiepcuoi-quocdu-phuongly.vercel.app';
-    let currentLink = '';
+    const TEMPLATE_SRC = 'assets/invite_wedding.jpg';
+    const CARD_W = 1024;
+    const CARD_H = 1536;
+    const TEXT_COLOR = '#5c4638';
+    const NAME_BASELINE_Y = 351;
+    const NAME_MAX_WIDTH = 520;
+    const NAME_FONT_SIZE = 54;
+    const NAME_MIN_SIZE = 30;
 
-    function generateLink() {
-      const name = document.getElementById('guest-input').value.trim();
+    const canvas = document.getElementById('preview');
+    const ctx = canvas.getContext('2d');
+    const input = document.getElementById('guest-input');
+    const btn = document.getElementById('btn-download');
+    const statusEl = document.getElementById('status');
+
+    const templateImg = new Image();
+    templateImg.crossOrigin = 'anonymous';
+    let templateReady = false;
+
+    templateImg.onload = async () => {
+      templateReady = true;
+      await document.fonts.load(nameFont(NAME_FONT_SIZE)).catch(() => []);
+      await document.fonts.ready;
+      drawCard();
+    };
+    templateImg.onerror = () => {
+      statusEl.textContent = 'Không tải được ảnh thiệp. Hãy mở trang qua http, không mở file trực tiếp.';
+    };
+    templateImg.src = TEMPLATE_SRC;
+
+    input.addEventListener('input', () => {
+      statusEl.textContent = '';
+      drawCard();
+    });
+
+    function drawCard() {
+      ctx.clearRect(0, 0, CARD_W, CARD_H);
+      if (templateReady) {
+        ctx.drawImage(templateImg, 0, 0, CARD_W, CARD_H);
+      } else {
+        ctx.fillStyle = '#f3eee4';
+        ctx.fillRect(0, 0, CARD_W, CARD_H);
+      }
+
+      const name = input.value.trim();
+      if (!name) return;
+
+      ctx.save();
+      let fontSize = NAME_FONT_SIZE;
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'alphabetic';
+      ctx.fillStyle = TEXT_COLOR;
+
+      while (fontSize > NAME_MIN_SIZE) {
+        ctx.font = nameFont(fontSize);
+        if (ctx.measureText(name).width <= NAME_MAX_WIDTH) break;
+        fontSize -= 1;
+      }
+      ctx.font = nameFont(fontSize);
+      const nameWidth = Math.min(ctx.measureText(name).width, NAME_MAX_WIDTH) + 20;
+      const left = (CARD_W - nameWidth) / 2;
+      if (templateReady) {
+        ctx.drawImage(templateImg, left, 310, nameWidth, 22, left, 335, nameWidth, 22);
+      }
+      ctx.fillText(name, CARD_W / 2, NAME_BASELINE_Y, NAME_MAX_WIDTH);
+      ctx.restore();
+    }
+
+    function nameFont(size) {
+      return 'italic 500 ' + size + 'px "Cormorant Garamond", serif';
+    }
+
+    function slugName(name) {
+      return name
+        .normalize('NFD')
+        .replace(/[\u0300-\u036f]/g, '')
+        .replace(/đ/g, 'd').replace(/Đ/g, 'D')
+        .replace(/[^a-zA-Z0-9]+/g, '-')
+        .replace(/^-|-$/g, '')
+        .toLowerCase()
+        .slice(0, 40) || 'khach';
+    }
+
+    async function downloadInvite() {
+      const name = input.value.trim();
       if (!name) {
-        document.getElementById('guest-input').focus();
+        input.focus();
+        statusEl.textContent = 'Hãy nhập tên người được mời.';
+        return;
+      }
+      if (!templateReady) {
+        statusEl.textContent = 'Ảnh thiệp chưa sẵn sàng, thử lại sau giây lát.';
         return;
       }
 
-      const encoded = encodeURIComponent(name);
-      currentLink   = BASE_URL + '/?to=' + encoded;
-
-      document.getElementById('result-url').textContent  = currentLink;
-      document.getElementById('preview-name').textContent = name;
-      document.getElementById('result-box').classList.add('show');
-
-      // Reset nút copy
-      const btn = document.getElementById('btn-copy');
-      btn.textContent = '📋 Sao chép';
-      btn.classList.remove('copied');
-    }
-
-    async function copyLink() {
-      if (!currentLink) return;
+      btn.disabled = true;
+      statusEl.textContent = 'Đang tạo thiệp…';
       try {
-        await navigator.clipboard.writeText(currentLink);
-      } catch {
-        // Fallback
-        const ta = document.createElement('textarea');
-        ta.value = currentLink;
-        document.body.appendChild(ta);
-        ta.select();
-        document.execCommand('copy');
-        document.body.removeChild(ta);
-      }
-      const btn = document.getElementById('btn-copy');
-      btn.textContent = '✅ Đã sao chép!';
-      btn.classList.add('copied');
-      setTimeout(() => {
-        btn.textContent = '📋 Sao chép';
-        btn.classList.remove('copied');
-      }, 2500);
-    }
+        await document.fonts.load(nameFont(NAME_FONT_SIZE)).catch(() => []);
+        await document.fonts.ready;
+        drawCard();
 
-    function openLink() {
-      if (currentLink) window.open(currentLink, '_blank');
+        const blob = await new Promise((resolve, reject) => {
+          canvas.toBlob(b => b ? resolve(b) : reject(new Error('toBlob failed')), 'image/jpeg', 0.92);
+        });
+
+        const filename = 'thiep-cuoi-' + slugName(name) + '.jpg';
+        const file = new File([blob], filename, { type: 'image/jpeg' });
+
+        if (navigator.canShare && navigator.canShare({ files: [file] })) {
+          try {
+            await navigator.share({
+              files: [file],
+              title: 'Thiệp cưới Quốc Du & Phương Ly'
+            });
+            statusEl.textContent = 'Chọn Lưu ảnh để đưa thiệp vào thư viện.';
+            return;
+          } catch (err) {
+            if (err && err.name === 'AbortError') {
+              statusEl.textContent = '';
+              return;
+            }
+          }
+        }
+
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = filename;
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        setTimeout(() => URL.revokeObjectURL(url), 4000);
+        statusEl.textContent = 'Đã tải thiệp. Trên iPhone, giữ ảnh rồi chọn Lưu ảnh nếu máy không tải tự động.';
+      } catch (err) {
+        statusEl.textContent = 'Không tạo được thiệp. Thử lại nhé.';
+      } finally {
+        btn.disabled = false;
+      }
     }
   </script>
 </body>
