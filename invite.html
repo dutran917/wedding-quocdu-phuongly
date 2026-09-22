@@ -157,12 +157,12 @@
   </div>
 
   <script>
-    const TEMPLATE_SRC = 'assets/invite_wedding.jpg';
+    const TEMPLATE_SRC = 'assets/invite_wedding.png';
     const CARD_W = 1024;
     const CARD_H = 1536;
     const TEXT_COLOR = '#5c4638';
-    const NAME_BASELINE_Y = 351;
-    const NAME_MAX_WIDTH = 520;
+    const NAME_BASELINE_Y = 253;
+    const NAME_MAX_WIDTH = 580;
     const NAME_FONT_SIZE = 54;
     const NAME_MIN_SIZE = 30;
 
@@ -216,11 +216,6 @@
         fontSize -= 1;
       }
       ctx.font = nameFont(fontSize);
-      const nameWidth = Math.min(ctx.measureText(name).width, NAME_MAX_WIDTH) + 20;
-      const left = (CARD_W - nameWidth) / 2;
-      if (templateReady) {
-        ctx.drawImage(templateImg, left, 310, nameWidth, 22, left, 335, nameWidth, 22);
-      }
       ctx.fillText(name, CARD_W / 2, NAME_BASELINE_Y, NAME_MAX_WIDTH);
       ctx.restore();
     }
